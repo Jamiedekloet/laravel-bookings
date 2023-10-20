@@ -33,9 +33,6 @@ class BookingsServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(realpath(__DIR__.'/../../config/config.php'), 'rinvex.bookings');
-
-        // Register console commands
-        $this->registerCommands($this->commands);
     }
 
     /**
@@ -45,9 +42,14 @@ class BookingsServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Publish Resources
-        $this->publishesConfig('rinvex/laravel-bookings');
-        $this->publishesMigrations('rinvex/laravel-bookings');
-        ! $this->autoloadMigrations('rinvex/laravel-bookings') || $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        $this->publishes([
+            __DIR__.'/../config/rinvex.bookings.php' => config_path('rinvex/laravel-bookings.php'),
+        ]);
+
+        $this->publishes([
+            __DIR__.'/../../database/migrations/' => database_path('migrations')
+        ], 'rinvex/laravel-bookings');
+
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
     }
 }
